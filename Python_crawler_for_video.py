@@ -1,5 +1,3 @@
-
-from flask import Flask, render_template, request
 import aiohttp
 import asyncio
 import os
@@ -10,26 +8,14 @@ import re
 import time
 from lxml import html
 import sys
+#消除HTTPS安全警告
+"""这个警告是urllib3库为了提醒您在进行不安全的HTTPS请求时存在潜在的风险而发出的"""
+#为了消除这个警告,引入以下库中函数
 import urllib3
-
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
-
-app = Flask(__name__)
-
-@app.route('/')
-def index():
-    return "欢迎访问爬虫网站！"
-
-@app.route('/crawl', methods=['GET', 'POST'])
-def crawl():
-    if request.method == 'POST':
-        asyncio.run(main())
-        return "爬取完成！"
-    return render_template('crawl.html')
-
+    # url = 'https://www.99meiju.org/vodplay/6331-4-1.html'
 async def async_download_ts(session, url, name, retry=5, timeout=30):
-    # 省略函数内容
     for _ in range(retry):
         try:
             async with session.get(url, timeout=timeout) as resp:
@@ -52,8 +38,9 @@ async def async_download_ts(session, url, name, retry=5, timeout=30):
             time.sleep(0.3) 
     else:
         print(f"文件{name}下载失败")
+
 async def main():
-    # 省略主函数内容
+    # 代码省略
     print("此程序只用于www.99meiju.org网站视频的爬取")
     url=input("请输入你要查找的影片所在的url:")
 
@@ -137,5 +124,12 @@ async def main():
 
             for ts_file in filesname:
                 os.remove(ts_file)
+
 if __name__ == "__main__":
-    app.run(debug=True)
+    
+    start_time=time.time()
+    asyncio.run(main())
+    end_time=time.time()
+    print("已全部下载完成!")
+    print(f"总共用时:{end_time-start_time}s")
+    
